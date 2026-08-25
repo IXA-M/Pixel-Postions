@@ -1,5 +1,7 @@
-@props(['class' => ''])
+@php
+    $classes = 'p-4 bg-white/5 rounded-xl border border-transparent hover:border-blue-800 group transition-colors duration-300';
+@endphp
 
-<div class="bg-white/5 rounded-xl p-6 border border-transparent hover:border-blue-800 transition-colors duration-300 group {{ $class }}">
+<div {{ $attributes(['class' => $classes]) }}>
     {{ $slot }}
 </div>

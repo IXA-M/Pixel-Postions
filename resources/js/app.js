@@ -1,5 +1,5 @@
-//
+import './bootstrap';
+
 import.meta.glob([
-    '../images/**',
-    '../fonts/**',
-], { eager: true });
+    '../images/**'
+]);
