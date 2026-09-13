@@ -32,3 +32,25 @@ test('a user can register with an employer logo', function () {
     ]);
     Storage::disk('public')->assertExists($user->employer->logo);
 });
+
+test('a user can register as a job seeker', function () {
+    $response = $this->post('/register', [
+        'name' => 'Job Seeker',
+        'email' => 'job-seeker@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+        'role' => 'job_seeker',
+    ]);
+
+    $user = User::where('email', 'job-seeker@example.com')->first();
+
+    $response->assertRedirect('/');
+    $this->assertAuthenticatedAs($user);
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'role' => 'job_seeker',
+    ]);
+    $this->assertDatabaseHas('job_seekers', [
+        'user_id' => $user->id,
+    ]);
+});

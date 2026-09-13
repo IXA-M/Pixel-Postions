@@ -30,6 +30,8 @@ class JobController extends Controller
      */
     public function create()
     {
+        abort_unless(Auth::user()->canPostJobs(), 403);
+
         return view('jobs.create');
     }
 
@@ -38,6 +40,8 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(Auth::user()->canPostJobs(), 403);
+
         $attributes = $request->validate([
             'title' => ['required'],
             'salary' => ['required'],

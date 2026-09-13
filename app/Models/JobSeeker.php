@@ -5,16 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Employer extends Model
+class JobSeeker extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'name',
-        'logo',
+        'headline',
+        'bio',
+        'resume_path',
+        'location',
     ];
 
     public function user(): BelongsTo
@@ -22,8 +24,10 @@ class Employer extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function jobs(): HasMany
+    public function jobs(): BelongsToMany
     {
-        return $this->hasMany(Job::class);
+        return $this->belongsToMany(Job::class, 'applications')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 }

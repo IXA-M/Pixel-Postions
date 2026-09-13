@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -20,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -45,8 +47,33 @@ class User extends Authenticatable
         ];
     }
 
-    public function employer()
+    public function company(): HasOne
+    {
+        return $this->hasOne(Company::class);
+    }
+
+    public function employer(): HasOne
     {
         return $this->hasOne(Employer::class);
+    }
+
+    public function jobSeeker(): HasOne
+    {
+        return $this->hasOne(JobSeeker::class);
+    }
+
+    public function isEmployer(): bool
+    {
+        return $this->role === 'employer';
+    }
+
+    public function isJobSeeker(): bool
+    {
+        return $this->role === 'job_seeker';
+    }
+
+    public function canPostJobs(): bool
+    {
+        return $this->isEmployer() || $this->employer()->exists();
     }
 }

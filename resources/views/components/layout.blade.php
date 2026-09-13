@@ -25,21 +25,35 @@
 
             <div class="space-x-6 font-bold">
                 <a href="/">Jobs</a>
-                <a href="#">Careers</a>
-                <a href="#">Salaries</a>
-                <a href="#">Companies</a>
+                <a href="{{ route('careers.index') }}">Careers</a>
+                <a href="{{ route('salaries.index') }}">Salaries</a>
+                <a href="{{ route('companies.index') }}">Companies</a>
             </div>
 
             @auth
-                <div class="space-x-6 font-bold flex">
-                    <a href="/jobs/create">Post a Job</a>
+                <div class="flex items-center gap-6 font-bold">
+                    @if(auth()->user()->canPostJobs())
+                        <a href="/jobs/create">Post a Job</a>
+                    @endif
 
-                    <form method="POST" action="/logout">
-                        @csrf
-                        @method('DELETE')
+                    <details class="relative">
+                        <summary class="flex cursor-pointer list-none items-center" aria-label="Open profile menu">
+                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
+                            </svg>
+                            <span class="sr-only">Profile menu</span>
+                        </summary>
 
-                        <button>Log Out</button>
-                    </form>
+                        <div class="absolute right-0 z-10 mt-3 w-40 rounded-xl border border-white/10 bg-zinc-950 p-2 shadow-xl">
+                            <a href="{{ route('profile.edit') }}" class="block rounded-lg px-3 py-2 hover:bg-white/10">Profile</a>
+                            <form method="POST" action="/logout">
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="block w-full rounded-lg px-3 py-2 text-left hover:bg-white/10">Log Out</button>
+                            </form>
+                        </div>
+                    </details>
                 </div>
             @endauth
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Employer;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -28,4 +29,20 @@ test('an employer can publish a featured job with tags', function () {
     $this->assertDatabaseHas('tags', ['name' => 'Analysis']);
 
     expect($employer->jobs()->latest()->first()->tags)->toHaveCount(2);
+});
+
+test('a normal user cannot access job creation', function () {
+    $user = User::factory()->create(['role' => 'job_seeker']);
+
+    $this->actingAs($user)->get('/jobs/create')->assertForbidden();
+
+    $this->actingAs($user)->post('/jobs', [
+        'title' => 'Unauthorized Job',
+        'salary' => '$90,000 USD',
+        'location' => 'Remote',
+        'schedule' => 'Full Time',
+        'url' => 'https://example.com/jobs/unauthorized',
+    ])->assertForbidden();
+
+    $this->assertDatabaseMissing('jobs', ['title' => 'Unauthorized Job']);
 });

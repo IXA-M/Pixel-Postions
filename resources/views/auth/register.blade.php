@@ -9,9 +9,25 @@
 
         <x-forms.divider />
 
-        <x-forms.input label="Employer Name" name="employer" />
-        <x-forms.input label="Employer Logo" name="logo" type="file" />
+        <x-forms.select label="Sign up as" name="role" id="role">
+            <option value="job_seeker" @selected(old('role', 'job_seeker') === 'job_seeker')>User</option>
+            <option value="employer" @selected(old('role') === 'employer')>Company</option>
+        </x-forms.select>
+
+        <div id="company-fields" @class(['space-y-6', 'hidden' => old('role') !== 'employer'])>
+            <x-forms.input label="Company Name" name="company_name" />
+            <x-forms.input label="Company Logo" name="logo" type="file" />
+        </div>
 
         <x-forms.button>Create Account</x-forms.button>
     </x-forms.form>
 </x-layout>
+
+<script>
+    const roleSelect = document.getElementById('role');
+    const companyFields = document.getElementById('company-fields');
+
+    roleSelect.addEventListener('change', () => {
+        companyFields.classList.toggle('hidden', roleSelect.value !== 'employer');
+    });
+</script>

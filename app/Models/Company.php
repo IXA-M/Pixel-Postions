@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
-class Employer extends Model
+class Company extends Model
 {
     use HasFactory;
 
@@ -15,6 +15,9 @@ class Employer extends Model
         'user_id',
         'name',
         'logo',
+        'description',
+        'website',
+        'location',
     ];
 
     public function user(): BelongsTo
@@ -22,8 +25,15 @@ class Employer extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function jobs(): HasMany
+    public function jobs(): HasManyThrough
     {
-        return $this->hasMany(Job::class);
+        return $this->hasManyThrough(
+            Job::class,
+            Employer::class,
+            'user_id',
+            'employer_id',
+            'user_id',
+            'id',
+        );
     }
 }

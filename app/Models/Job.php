@@ -11,6 +11,17 @@ class Job extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'employer_id',
+        'company_id',
+        'title',
+        'salary',
+        'location',
+        'schedule',
+        'url',
+        'featured',
+    ];
+
     public function tag(string $name): void
     {
         $tag = Tag::firstOrCreate(['name' => ucwords(strtolower(trim($name)))]);
@@ -26,5 +37,17 @@ class Job extends Model
     public function employer(): BelongsTo
     {
         return $this->belongsTo(Employer::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function jobSeekers(): BelongsToMany
+    {
+        return $this->belongsToMany(JobSeeker::class, 'applications')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 }
