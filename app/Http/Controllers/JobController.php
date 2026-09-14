@@ -16,7 +16,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        $jobs = Job::latest()->with(['employer', 'tags'])->get()->groupBy('featured');
+        $jobs = Job::latest()->with(['employer', 'tags'])->withCount('applications')->get()->groupBy('featured');
 
         return view('jobs.index', [
             'jobs' => $jobs->get(0, collect()),
@@ -45,7 +45,9 @@ class JobController extends Controller
         $attributes = $request->validate([
             'title' => ['required'],
             'salary' => ['required'],
-            'location' => ['required'],
+            'location' => ['required', 'string', 'min:3', 'max:255'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
             'schedule' => ['required', Rule::in(['Part Time', 'Full Time'])],
             'url' => ['required', 'active_url'],
             'tags' => ['nullable'],

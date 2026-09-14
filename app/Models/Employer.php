@@ -13,6 +13,7 @@ class Employer extends Model
 
     protected $fillable = [
         'user_id',
+        'company_id',
         'name',
         'logo',
     ];
@@ -20,6 +21,11 @@ class Employer extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function jobs(): HasMany

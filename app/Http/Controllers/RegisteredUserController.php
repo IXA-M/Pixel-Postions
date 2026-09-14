@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,9 @@ class RegisteredUserController extends Controller
      */
     public function create()
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'companies' => Company::query()->orderBy('name')->get(),
+        ]);
     }
 
     /**
@@ -27,21 +30,17 @@ class RegisteredUserController extends Controller
     {
         $role = $request->input('role');
 
-        if (! $role && $request->filled('employer')) {
-            $role = 'employer';
-        }
-
         $request->merge([
             'role' => $role ?: 'job_seeker',
-            'company_name' => $request->input('company_name', $request->input('employer')),
         ]);
 
         $attributes = $request->validate([
             'name' => ['required'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(6)],
-            'role' => ['required', 'in:employer,job_seeker'],
-            'company_name' => ['required_if:role,employer'],
+            'role' => ['required', 'in:company,employer,job_seeker'],
+            'company_name' => ['required_if:role,company', 'nullable', 'string', 'max:255'],
+            'company_id' => ['required_if:role,employer', 'nullable', 'exists:companies,id'],
             'logo' => ['nullable', File::types(['png', 'jpg', 'webp'])],
         ]);
 
@@ -53,7 +52,7 @@ class RegisteredUserController extends Controller
                 'role',
             ]));
 
-            if ($attributes['role'] === 'employer') {
+            if ($attributes['role'] === 'company') {
                 $logoPath = $request->file('logo')?->store('logos', 'public');
                 $companyName = $attributes['company_name'];
 
@@ -62,9 +61,13 @@ class RegisteredUserController extends Controller
                     'logo' => $logoPath,
                 ]);
 
+            } elseif ($attributes['role'] === 'employer') {
+                $company = Company::findOrFail($attributes['company_id']);
+
                 $user->employer()->create([
-                    'name' => $companyName,
-                    'logo' => $logoPath,
+                    'company_id' => $company->id,
+                    'name' => $user->name,
+                    'logo' => $company->logo ?? '',
                 ]);
             } else {
                 $user->jobSeeker()->create();

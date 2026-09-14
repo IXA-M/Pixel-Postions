@@ -27,7 +27,18 @@
                 <a href="/">Jobs</a>
                 <a href="{{ route('careers.index') }}">Careers</a>
                 <a href="{{ route('salaries.index') }}">Salaries</a>
-                <a href="{{ route('companies.index') }}">Companies</a>
+                @auth
+                    @php
+                        $myCompany = auth()->user()->company ?? auth()->user()->employer?->company;
+                    @endphp
+                    @if($myCompany)
+                        <a href="{{ route('companies.show', $myCompany) }}">My Company</a>
+                    @else
+                        <a href="{{ route('companies.index') }}">Companies</a>
+                    @endif
+                @else
+                    <a href="{{ route('companies.index') }}">Companies</a>
+                @endauth
             </div>
 
             @auth

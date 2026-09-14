@@ -18,4 +18,11 @@ class CompanyController extends Controller
             'companies' => $companies,
         ]);
     }
+
+    public function show(Company $company): View
+    {
+        $company->load(['jobs' => fn ($query) => $query->with(['employer', 'tags'])->withCount('applications')->latest()]);
+
+        return view('companies.show', compact('company'));
+    }
 }

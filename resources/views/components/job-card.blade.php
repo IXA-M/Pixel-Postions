@@ -5,11 +5,15 @@
 
     <div class="py-8">
         <h3 class="group-hover:text-blue-800 text-xl font-bold transition-colors duration-300">
-            <a href="{{ $job->url }}" target="_blank">
+            <a href="{{ route('careers.show', $job) }}">
                 {{ $job->title }}
             </a>
         </h3>
-        <p class="text-sm mt-4">{{ $job->salary }}</p>
+        <p class="text-sm mt-4">{{ $job->salary }}
+            @if(auth()->guest() || auth()->user()->isJobSeeker())
+                · {{ $job->applications_count }} {{ $job->applications_count === 1 ? 'application' : 'applications' }}
+            @endif
+        </p>
     </div>
 
     <div class="flex justify-between items-center mt-auto">

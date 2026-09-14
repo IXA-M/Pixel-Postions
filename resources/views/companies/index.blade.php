@@ -14,7 +14,7 @@
                 <x-panel class="space-y-5">
                     <div class="flex items-start justify-between gap-4">
                         <div>
-                            <h2 class="text-xl font-bold">{{ $company->name }}</h2>
+                            <h2 class="text-xl font-bold"><a href="{{ route('companies.show', $company) }}" class="hover:text-blue-300">{{ $company->name }}</a></h2>
                             @if($company->location)
                                 <p class="mt-1 text-sm text-gray-400">{{ $company->location }}</p>
                             @endif
@@ -33,6 +33,8 @@
                             Visit company website
                         </a>
                     @endif
+
+                    <a href="{{ route('companies.show', $company) }}" class="text-sm font-bold text-blue-300 hover:text-blue-200">View all jobs</a>
                 </x-panel>
             @empty
                 <p class="text-gray-400">No companies have registered yet.</p>

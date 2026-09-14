@@ -31,4 +31,12 @@ return [
         ],
     ],
 
+    'google_maps' => [
+        'key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+
+    'maptiler' => [
+        'key' => env('MAPTILER_API_KEY'),
+    ],
+
 ];

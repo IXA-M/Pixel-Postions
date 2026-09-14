@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Job;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -74,6 +75,26 @@ class User extends Authenticatable
 
     public function canPostJobs(): bool
     {
-        return $this->isEmployer() || $this->employer()->exists();
+        return $this->isEmployer() && $this->employer()->exists();
+    }
+
+    public function canViewApplicationCount(Job $job): bool
+    {
+        if ($this->isJobSeeker()) {
+            return true;
+        }
+
+        $companyId = $this->isEmployer()
+            ? $this->employer?->company_id
+            : $this->company?->id;
+
+        if (! $companyId) {
+            return false;
+        }
+
+        return $job->employer()->where(function ($query) use ($companyId) {
+            $query->where('company_id', $companyId)
+                ->orWhereHas('user.company', fn ($query) => $query->whereKey($companyId));
+        })->exists();
     }
 }

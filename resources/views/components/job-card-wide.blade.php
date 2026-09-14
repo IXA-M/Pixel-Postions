@@ -9,12 +9,16 @@
         <a href="#" class="self-start text-sm text-gray-400 transition-colors duration-300">{{ $job->employer->name }}</a>
 
         <h3 class="font-bold text-xl mt-3 group-hover:text-blue-800">
-            <a href="{{ $job->url }}" target="_blank">
+            <a href="{{ route('careers.show', $job) }}">
                 {{ $job->title }}
             </a>
         </h3>
 
-        <p class="text-sm text-gray-400 mt-auto">{{ $job->salary }}</p>
+        <p class="text-sm text-gray-400 mt-auto">{{ $job->salary }}
+            @if(auth()->guest() || auth()->user()->isJobSeeker())
+                · {{ $job->applications_count }} {{ $job->applications_count === 1 ? 'application' : 'applications' }}
+            @endif
+        </p>
     </div>
 
     <div>

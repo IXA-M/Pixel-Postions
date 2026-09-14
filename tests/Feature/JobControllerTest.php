@@ -13,6 +13,8 @@ test('an employer can publish a featured job with tags', function () {
         'title' => 'Credit Analyst',
         'salary' => 85000,
         'location' => 'Remote',
+        'latitude' => 28.5993,
+        'longitude' => -81.3392,
         'schedule' => 'Full Time',
         'url' => 'https://example.com/jobs/credit-analyst',
         'featured' => '1',
@@ -24,6 +26,8 @@ test('an employer can publish a featured job with tags', function () {
         'employer_id' => $employer->id,
         'title' => 'Credit Analyst',
         'featured' => true,
+        'latitude' => 28.5993,
+        'longitude' => -81.3392,
     ]);
     $this->assertDatabaseHas('tags', ['name' => 'Finance']);
     $this->assertDatabaseHas('tags', ['name' => 'Analysis']);
